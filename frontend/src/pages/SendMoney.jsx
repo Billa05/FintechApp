@@ -1,12 +1,22 @@
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from "axios";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const SendMoney = () => {
     const [searchParams] = useSearchParams();
     const id = searchParams.get("id");
     const name = searchParams.get("name");
     const [amount, setAmount] = useState(0);
+    const [success, setSuccess] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (success) {
+            setTimeout(() => {
+                navigate('/dashboard');
+            }, 2000);
+        }
+    }, [success, navigate]);
 
     return <div class="flex justify-center h-screen bg-gray-100">
         <div className="h-full flex flex-col justify-center">
@@ -41,8 +51,8 @@ export const SendMoney = () => {
                         placeholder="Enter amount"
                     />
                     </div>
-                    <button onClick={() => {
-                        axios.post("http://localhost:3000/api/v1/account/transfer", {
+                    <button onClick={async() => {
+                        const response = await axios.post("http://localhost:3000/api/v1/account/transfer", {
                             to: id,
                             amount
                         }, {
@@ -50,11 +60,15 @@ export const SendMoney = () => {
                                 Authorization: "Bearer " + localStorage.getItem("token")
                             }
                         })
+                        if(response.data.message === "Transfer successful"){
+                            setSuccess(true)
+                        }
                     }} class="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white">
                         Initiate Transfer
                     </button>
                 </div>
                 </div>
+                {success && <div className="mt-2 text-green-600">Deposit successful</div>}
         </div>
       </div>
     </div>
