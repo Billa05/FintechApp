@@ -34,8 +34,8 @@ export const Dashboard = ({ userId }) => {
             }
           }
         );
-        setUser(response.data.data.users[0]);
-        console.log(response.data.data);
+        const fetchedName = response.data.data.users[0].firstName;
+        setName(fetchedName);
       } catch (error) {
         console.error("Error fetching user:", error);
       }
