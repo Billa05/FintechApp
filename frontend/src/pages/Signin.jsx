@@ -8,7 +8,7 @@ import { SubHeading } from "../components/SubHeading"
 import { useNavigate } from "react-router-dom"
 
 export const Signin = () => {
-    const [warningModal,setWarningModal] = useState(false);
+    const [warningModal,setWarningModal] = useState("");
     const navigate = useNavigate();
     
     return <div className="bg-slate-300 h-screen flex justify-center">
@@ -16,7 +16,7 @@ export const Signin = () => {
       <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
         <Heading label={"Sign in"} />
         <SubHeading label={"Enter your credentials to access your account"} />
-        <InputBox placeholder="harkirat@gmail.com" label={"Email"} />
+        <InputBox placeholder="username@gmail.com" label={"Email"} />
         <InputBox placeholder="123456" label={"Password"} />
         <div className="pt-4">
           <Button onClick={async()=>{
@@ -28,12 +28,13 @@ export const Signin = () => {
               localStorage.setItem("token", response.data.token);
               navigate("/dashboard");
             }else{
-              setWarningModal(true);
+              setWarningModal(response.data.message);
             }
           }} label={"Sign in"} />
         </div>
         <BottomWarning label={"Don't have an account?"} buttonText={"Sign up"} to={"/signup"} />
       </div>
+      {warningModal && <div className="mt-2 text-red-600"> {warningModal} </div>}
     </div>
   </div>
 }

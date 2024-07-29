@@ -12,7 +12,7 @@ export const Signup = () => {
     const [lastName, setLastName] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [warningModal,setWarningModal] = useState(false);
+    const [warningModal,setWarningModal] = useState("");
     const navigate = useNavigate();
 
     return <div className="bg-slate-300 h-screen flex justify-center">
@@ -42,20 +42,21 @@ export const Signup = () => {
                 password
               });
               console.log(response.data.message)
-              if(response.data.message == "User created successfully"){
+              if(response.data.message === "User created successfully"){
                 localStorage.setItem("token", response.data.token);
                 navigate("/dashboard");
-              } else {
-                setWarningModal(true);
+              } else if(response.data.message === "Email ID already exists") {
+                setWarningModal(response.data.message);
               }
             } catch (error) {
               console.error(error);
-              setWarningModal(true);
+              setWarningModal(error);
             }
           }} label={"Sign up"} />
         </div>
         <BottomWarning label={"Already have an account?"} buttonText={"Sign in"} to={"/signin"} />
       </div>
+      {warningModal && <div className="mt-2 text-red-600"> {warningModal} </div>}
     </div>
   </div>
 }

@@ -36,8 +36,13 @@ export const Dashboard = ({ userId }) => {
             },
           }
         );
-        const fetchedName = response.data.data.users[0].firstName;
-        setName(fetchedName);
+        const users = response.data.data.users;
+        if (users && users.length > 0) {
+          const fetchedName = users[0].firstName;
+          setName(fetchedName);
+        } else {
+          console.error("No users found");
+        }
       } catch (error) {
         console.error("Error fetching user:", error);
       }

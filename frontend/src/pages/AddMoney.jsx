@@ -3,26 +3,20 @@ import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
 export const AddMoney = () => {
-    const [amount, setAmount] = useState(0);
+    const [amount, setAmount] = useState('');
     const navigate = useNavigate();
 
     const handleChange = (e) => {
         let value = e.target.value;
-
-        // Restrict to two decimal places
-        if (value.includes('.')) {
-            const parts = value.split('.');
-            if (parts[1].length > 2) {
-                value = `${parts[0]}.${parts[1].slice(0, 2)}`;
-            }
+        // Allow only numbers and up to two decimal places
+        if (/^\d*\.?\d{0,2}$/.test(value)) {
+            setAmount(value);
         }
+    };
 
-        // Format to two decimal places if it's a whole number
-        if (!value.includes('.')) {
-            value = parseFloat(value).toFixed(2);
-        }
-
-        setAmount(value);
+    const handleBlur = () => {
+        // Convert to a number and format to two decimal places
+        setAmount(parseFloat(amount).toFixed(2));
     };
 
     return (
@@ -43,18 +37,18 @@ export const AddMoney = () => {
                                 </label>
                                 <input
                                     onChange={handleChange}
-                                    type="number"
-                                    step="0.01"
+                                    onBlur={handleBlur}
+                                    value={amount}
+                                    type="text"
                                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                                     id="amount"
                                     placeholder="Enter amount"
-                                    value={amount}
                                 />
                             </div>
                             <button
                                 onClick={async () => {
                                     const response = await axios.post("http://localhost:3000/api/v1/account/deposit", {
-                                        amount: amount * 100
+                                        amount: parseFloat(amount) * 100
                                     }, {
                                         headers: {
                                             Authorization: "Bearer " + localStorage.getItem("token")
