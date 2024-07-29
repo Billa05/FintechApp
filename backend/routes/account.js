@@ -16,7 +16,7 @@ router.post("/transfer", authMiddleware, async (req, res) => {
         if (!fromAccount) {
             throw new Error("Account not found");
         }
-        if (fromAccount.balance < amount) {
+        if ((fromAccount.balanceInPaise)/100 < amount) {
             throw new Error("Insufficient balance");
         }
 
@@ -25,8 +25,8 @@ router.post("/transfer", authMiddleware, async (req, res) => {
             throw new Error("Invalid account");
         }
 
-        await Account.updateOne({ userId: req.userId }, { $inc: { balance: -amount } }).session(session);
-        await Account.updateOne({ userId: to }, { $inc: { balance: amount } }).session(session);
+        await Account.updateOne({ userId: req.userId }, { $inc: { balanceInPaise: -(amount*100) } }).session(session);
+        await Account.updateOne({ userId: to }, { $inc: { balanceInPaise: amount*100 } }).session(session);
 
         await session.commitTransaction();
         res.json({ message: "Transfer successful" });

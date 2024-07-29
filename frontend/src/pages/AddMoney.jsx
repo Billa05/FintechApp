@@ -8,14 +8,12 @@ export const AddMoney = () => {
 
     const handleChange = (e) => {
         let value = e.target.value;
-        // Allow only numbers and up to two decimal places
         if (/^\d*\.?\d{0,2}$/.test(value)) {
             setAmount(value);
         }
     };
 
     const handleBlur = () => {
-        // Convert to a number and format to two decimal places
         setAmount(parseFloat(amount).toFixed(2));
     };
 
